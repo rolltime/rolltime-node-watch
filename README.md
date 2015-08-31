@@ -1,6 +1,8 @@
 ## Node Watch API
 Service designed to log the status of many Rolltime node collectors.
 
+[![Build Status](https://travis-ci.org/rolltime/rolltime-node-watch.svg)](https://travis-ci.org/rolltime/rolltime-node-watch)
+
 ## Usage
 The API has the following working methods:
 
