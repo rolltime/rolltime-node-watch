@@ -4,6 +4,45 @@ module.exports = function (app) {
   var CollectorStatus = require('./db/status.js')
   var Config = require('../config/dev')
 
+  FetchAllStatus = function (callback) {
+    CollectorStatus.find(function (err, data) {
+      if (err) {
+        var payload = { 'success': false, 'message': 'Could not collect status records from database.'}
+        callback(payload)
+      } else {
+        var out = {
+          'success': true,
+          'count': null,
+          'records': []
+        }
+        for (i = 0; i < data.length; i++) {
+          //
+          // Cleaning records that
+          // don't have id.
+          //
+          var c = 0
+          if (typeof data[i].id === typeof undefined) {
+            continue
+          } else {
+            c += 1
+            out.records.push({
+              'id': data[i].id,
+              'status': data[i].status,
+              'message': data[i].message,
+              'time': data[i].time
+            })
+          }
+
+          //
+          // Adding count
+          //
+          out.count = c
+        }
+        callback(null, out)
+      }
+    })
+  }
+
   app.get('/', function (req, res) {
     //
     // Check if the user is
@@ -17,40 +56,11 @@ module.exports = function (app) {
       // Sends all status back.
       // TODO: set a limit.
       //
-      CollectorStatus.find(function (err, data) {
+      FetchAllStatus(function (err, data) {
         if (err) {
-          var payload = { 'success': false, 'message': 'Could not collect status records from database.'}
-          res.send(payload)
+          res.send(err)
         } else {
-          var out = {
-            'success': true,
-            'count': null,
-            'records': []
-          }
-          for (i = 0; i < data.length; i++) {
-            //
-            // Cleaning records that
-            // don't have id.
-            //
-            var c = 0
-            if (typeof data[i].id === typeof undefined) {
-              continue
-            } else {
-              c += 1
-              out.records.push({
-                'id': data[i].id,
-                'status': data[i].status,
-                'message': data[i].message,
-                'time': data[i].time
-              })
-            }
-
-            //
-            // Adding count
-            //
-            out.count = c
-          }
-          res.send(out)
+          res.send(data)
         }
       })
     }
@@ -79,19 +89,8 @@ module.exports = function (app) {
       var payload = { 'success': false, 'message': 'Scraper id not provided.'}
       res.send(payload)
     } else {
-      http.get('/', function (response) {
-        var body = ''
-        response.on('data', function (chunk) {
-          body += chunk
-        })
-        response.on('close', function () {
-          var payload = { 'success': true, 'message': 'Series calculation not available on this version.'}
-          res.send(out)
-        })
-      }).on('error', function () {
-        var payload = { 'success': false, 'message': 'Failed to calculate summary.'}
-        res.send(payload)
-      })
+      var payload = { 'success': true, 'message': 'Series calculation not available on this version.'}
+      res.send(payload)
     }
   })
 
@@ -101,18 +100,19 @@ module.exports = function (app) {
   // an overview.
   //
   app.get('/overview', function (req, res) {
-    http.get('/', function (response) {
-      var body = ''
-      response.on('data', function (chunk) {
-        body += chunk
-      })
-      response.on('close', function () {
-        var payload = { 'success': true, 'message': 'Overview calculation not available on this version.'}
-        res.send(out)
-      })
-    }).on('error', function () {
-      var payload = { 'success': false, 'message': 'Failed to calculate summary.'}
-      res.send(payload)
+    var url = 'http://' + req.get('host') + '/'
+    FetchAllStatus(function (err, data) {
+      if (err) {
+        var payload = { 'success': false, 'message': 'Failed to calculate summary.'}
+        res.send(payload)
+      } else {
+        var payload = {
+          'success': true,
+          'message': 'Overview calculation not available on this version.',
+          'count': data.length
+        }
+        res.send(payload)
+      }
     })
   })
 
@@ -121,7 +121,9 @@ module.exports = function (app) {
     // Check that necessary parameters have
     // been provided.
     //
-    if (typeof req.body.id !== undefined | typeof req.body.status !== undefined) {
+    console.log(typeof req.body.id)
+    console.log(typeof req.body.message)
+    if (typeof req.body['id'] === undefined || typeof req.body['message'] === undefined) {
       var payload = {
         'success': false,
         'message': 'Parameters are missing. Please provide an id, status, and a message.',
@@ -145,8 +147,44 @@ module.exports = function (app) {
     status.save(function (err, data) {
       if (err) {
         console.log(err)
+        var payload = {
+          'success': false,
+          'message': 'Database error. Failed to store data.',
+        }
+        res.send(payload)
       } else {
-        console.log('Record saved successfully.', data)
+        var payload = {
+          'success': true,
+          'message': 'Stored record in database successfully.',
+          'record': data,
+        }
+        res.send(payload)
+      }
+    })
+  })
+
+  //
+  // Endpoint for deleting data
+  // from specific node.
+  //
+  app.delete('/', function (req, res) {
+    CollectorStatus.remove({ id: req.body.id }, function (err, data) {
+      if (err) {
+        var payload = {
+          'success': false,
+          'message': 'Failed to remove record from database.',
+          'error': err,
+        }
+        res.send(payload)
+      } else {
+        var i = 0
+        var payload = {
+          'success': true,
+          'message': 'All record from node' + ' were removed from database.',
+          'count': i,
+          'log': data,
+        }
+        res.send(payload)
       }
     })
   })
