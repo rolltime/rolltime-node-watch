@@ -17,7 +17,7 @@ chai.use(chaiHttp)
 describe('Application routes.', function () {
   var application = chai.request('http://localhost:9000')
 
-  it('[/status] should return 200 status.', function (done) {
+  it('GET [/status] should return 200 status.', function (done) {
     application
       .get('/status')
       .end(function (err, res) {
@@ -26,7 +26,7 @@ describe('Application routes.', function () {
       })
   })
 
-  it('[/status] to have complete status object.', function (done) {
+  it('GET [/status] to have complete status object.', function (done) {
     application
       .get('/status')
       .end(function (err, res) {
@@ -183,7 +183,7 @@ describe('Application routes.', function () {
       })
   })
 
-  it('[/404] should return a 404 error.', function (done) {
+  it('GET [/404] should return a 404 error.', function (done) {
     application
       .get('/404')
       .end(function (err, res) {
@@ -192,7 +192,7 @@ describe('Application routes.', function () {
       })
   })
 
-  it('[/404] should return a page not found message.', function (done) {
+  it('GET [/404] should return a page not found message.', function (done) {
     application
       .get('/404')
       .end(function (err, res) {
