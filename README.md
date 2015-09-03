@@ -16,7 +16,8 @@ The API has the following working methods:
 Example request:
 
 ```shell
-$ curl -X GET localhost:4000/ -d "id=collector-ny-01&status=error&message='Failed to collect data.'&time=2015-06-01T14:34:01"
+$ curl -X POST localhost:9000/ \
+  -d "id=collector-ny-01&status=error&message='Failed to collect data.'&time=2015-06-01T14:34:01'"
 ```
 
 ## Docker Setup
