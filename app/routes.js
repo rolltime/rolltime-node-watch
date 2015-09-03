@@ -83,8 +83,7 @@ module.exports = function (app) {
     // Check that necessary parameters have
     // been provided.
     //
-    console.log(typeof req.body.id)
-    console.log(typeof req.body.message)
+    console.log('Query: ' + req.body)
     if (typeof req.body['id'] === undefined || typeof req.body['message'] === undefined) {
       var payload = {
         'success': false,
