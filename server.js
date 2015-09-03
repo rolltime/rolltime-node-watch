@@ -13,6 +13,8 @@ var mongoose = require('mongoose')
 var port = process.env.PORT || 9000
 var DB = require('./config/database')
 
+var _version = 'v.0.1.3'
+
 //
 // Only start the application
 // if the database is ready.
