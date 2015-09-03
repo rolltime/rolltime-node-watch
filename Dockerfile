@@ -9,7 +9,7 @@ FROM node:latest
 MAINTAINER Luis Capelo <luiscape@gmail.com>
 
 RUN \
-  npm install -g pm2 && \
+  npm install -g pm2 \
   && git clone http://github.com/rolltime/rolltime-node-watch \
   && cd rolltime-node-watch \
   npm install
