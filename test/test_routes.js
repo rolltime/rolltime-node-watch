@@ -142,7 +142,7 @@ describe('Application routes.', function () {
     application
       .delete('/')
       .send({
-        id: 'foo'
+        id: 'collector-ny-01'
       })
       .end(function (err, res) {
         expect(res.body).to.have.a.property('success')
