@@ -16,3 +16,4 @@ istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec
 # Cleaning up.
 #
 # rm -rf coverage/
+pm2 stop server && pm2 delete server
