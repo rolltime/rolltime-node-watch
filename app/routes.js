@@ -142,7 +142,7 @@ module.exports = function (app) {
         var i = 0
         var payload = {
           'success': true,
-          'message': 'All record from node' + ' were removed from database.',
+          'message': 'All record from node' + req.body.id + ' were removed from database.',
           'count': i,
           'log': data,
         }
