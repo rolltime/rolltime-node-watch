@@ -1,47 +1,9 @@
 module.exports = function (app) {
   var http = require('http')
   var moment = require('moment')
-  var CollectorStatus = require('./db/status.js')
+  var CollectorStatus = require('./db/status')
   var Config = require('../config/dev')
-
-  FetchAllStatus = function (callback) {
-    CollectorStatus.find(function (err, data) {
-      if (err) {
-        var payload = { 'success': false, 'message': 'Could not collect status records from database.'}
-        callback(payload)
-      } else {
-        var out = {
-          'success': true,
-          'count': null,
-          'records': []
-        }
-        for (i = 0; i < data.length; i++) {
-          //
-          // Cleaning records that
-          // don't have id.
-          //
-          var c = 0
-          if (typeof data[i].id === typeof undefined) {
-            continue
-          } else {
-            c += 1
-            out.records.push({
-              'id': data[i].id,
-              'status': data[i].status,
-              'message': data[i].message,
-              'time': data[i].time
-            })
-          }
-
-          //
-          // Adding count
-          //
-          out.count = c
-        }
-        callback(null, out)
-      }
-    })
-  }
+  var Fetch = require('./functions/fetch')
 
   app.get('/', function (req, res) {
     //
@@ -56,7 +18,7 @@ module.exports = function (app) {
       // Sends all status back.
       // TODO: set a limit.
       //
-      FetchAllStatus(function (err, data) {
+      Fetch.FetchAllStatus(function (err, data) {
         if (err) {
           res.send(err)
         } else {
@@ -101,7 +63,7 @@ module.exports = function (app) {
   //
   app.get('/overview', function (req, res) {
     var url = 'http://' + req.get('host') + '/'
-    FetchAllStatus(function (err, data) {
+    Fetch.FetchAllStatus(function (err, data) {
       if (err) {
         var payload = { 'success': false, 'message': 'Failed to calculate summary.'}
         res.send(payload)
