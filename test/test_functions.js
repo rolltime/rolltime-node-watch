@@ -11,21 +11,18 @@ var expect = require('chai').expect
 //
 var Fetch = require('../app/functions/fetch')
 
-//
-// Helper function that
-// evaluates callback data.
-//
-EvaluateCallbacks = function (err, data) {
-  if (err) {
-    return err
-  } else {
-    return data
-  }
-}
+describe('Application functions.', function () {
+  it('Fetch.FetchAllStatus() should return an object.', function (done) {
+    Fetch.FetchAllStatus(function (err, data) {
+      var result
+      if (err) {
+        result = err
+      } else {
+        result = data
+      }
+      expect(typeof result).to.equal('object')
+    })
+    done()
+  })
 
-// describe('Application functions.', function () {
-//   it('Fetch.FetchAllStatus() should return an object.', function (done) {
-//     done()
-//   })
-
-// })
+})
