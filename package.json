@@ -1,6 +1,6 @@
 {
   "name": "hdx-monitor-scraper-status",
-  "version": "0.1.0",
+  "version": "0.1.5",
   "description": "Collecting the status of scrapers and collectors. ",
   "main": "server.js",
   "scripts": {
